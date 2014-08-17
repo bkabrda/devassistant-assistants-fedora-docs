@@ -40,7 +40,7 @@ run:
 
 - log_i: Creating new book using publican.
 - cl: publican create --type book --brand fedora --product "$product" --version "$release" --lang "$lang" --name "$topdir"
-- cl: cd "$topdir"
+- cl: cd "$topdir_normalized"
 
 - $have_username: True
 - $retval, $username~: $(git config user.name)
@@ -53,7 +53,7 @@ run:
   - if not $have_username:
     - log_w: Can't get a proper username, TODO some instructions
 - if $have_username:
-  - cl: sed -i 's|<!ENTITY HOLDER.*|<!ENTITY HOLDER "$username">|' "$lang/$topdir.ent"
+  - cl: sed -i 's|<!ENTITY HOLDER.*|<!ENTITY HOLDER "$username">|' "$lang/$topdir_normalized.ent"
   - cl: sed -i -e '/affiliation/d' -e '/orgname/d' -e '/orgdiv/d' "$lang/Author_Group.xml"
 
 - $have_email, $email~: $(git config user.email)
@@ -66,9 +66,9 @@ run:
 
 - $ent_bz: <!ENTITY BZURL '<ulink url="https://bugzilla.redhat.com/enter_bug.cgi?product=&PRODUCT;&amp;component=&BOOKID;" />'>
 - cl: |
-    cat >> "$lang/$topdir.ent" << EOF
+    cat >> "$lang/$topdir_normalized.ent" << EOF
     $ent_bz
     EOF
 
-- log_i: Your project has been created in "$topdir".
+- log_i: Your project has been created in "$topdir_normalized".
 - log_i: TODO instructions
